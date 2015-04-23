@@ -1047,6 +1047,7 @@ data HscTarget
   = HscC           -- ^ Generate C code.
   | HscAsm         -- ^ Generate assembly using the native code generator.
   | HscLlvm        -- ^ Generate assembly using the llvm code generator.
+  | HscMu          -- ^ Generate a binary using the mu backend.
   | HscInterpreted -- ^ Generate bytecode.  (Requires 'LinkInMemory')
   | HscNothing     -- ^ Don't generate any code.  See notes above.
   deriving (Eq, Show)
@@ -1056,6 +1057,7 @@ isObjectTarget :: HscTarget -> Bool
 isObjectTarget HscC     = True
 isObjectTarget HscAsm   = True
 isObjectTarget HscLlvm  = True
+isObjectTarget HscMu    = True
 isObjectTarget _        = False
 
 -- | Does this target retain *all* top-level bindings for a module,
@@ -2669,6 +2671,7 @@ dynamic_flags = [
          (addWarn $ "The -fvia-C flag does nothing; " ++
                     "it will be removed in a future GHC release"))
   , defGhcFlag "fllvm"            (NoArg (setObjTarget HscLlvm))
+  , defGhcFlag "fmu"              (NoArg (setObjTarget HscMu))
 
   , defFlag "fno-code"         (NoArg (do upd $ \d -> d{ ghcLink=NoLink }
                                           setTarget HscNothing))

@@ -122,6 +122,7 @@ data Phase
         | LlvmOpt       -- Run LLVM opt tool over llvm assembly
         | LlvmLlc       -- LLVM bitcode to native assembly
         | LlvmMangle    -- Fix up TNTC by processing assembly produced by LLVM
+        | Mu            -- Mu compilation
         | CmmCpp        -- pre-process Cmm source
         | Cmm           -- parse & compile Cmm code
         | MergeStub     -- merge in the stub object file
@@ -159,6 +160,7 @@ eqPhase (As x)      (As y)     = x == y
 eqPhase LlvmOpt     LlvmOpt    = True
 eqPhase LlvmLlc     LlvmLlc    = True
 eqPhase LlvmMangle  LlvmMangle = True
+eqPhase Mu          Mu         = True
 eqPhase CmmCpp      CmmCpp     = True
 eqPhase Cmm         Cmm        = True
 eqPhase MergeStub   MergeStub  = True
@@ -187,6 +189,7 @@ nextPhase dflags p
       LlvmOpt    -> LlvmLlc
       LlvmLlc    -> LlvmMangle
       LlvmMangle -> As False
+      Mu         -> As False
       SplitAs    -> MergeStub
       As _       -> MergeStub
       Ccpp       -> As False
@@ -228,6 +231,7 @@ startPhase "S"        = As True
 startPhase "ll"       = LlvmOpt
 startPhase "bc"       = LlvmLlc
 startPhase "lm_s"     = LlvmMangle
+startPhase "mu"       = Mu
 startPhase "o"        = StopLn
 startPhase "cmm"      = CmmCpp
 startPhase "cmmcpp"   = Cmm
@@ -257,6 +261,7 @@ phaseInputExt (As False)          = "s"
 phaseInputExt LlvmOpt             = "ll"
 phaseInputExt LlvmLlc             = "bc"
 phaseInputExt LlvmMangle          = "lm_s"
+phaseInputExt Mu                  = "mu_s"
 phaseInputExt SplitAs             = "split_s"
 phaseInputExt CmmCpp              = "cmm"
 phaseInputExt Cmm                 = "cmmcpp"

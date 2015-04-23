@@ -1522,6 +1522,16 @@ runPhase (RealPhase LlvmMangle) input_fn dflags
       return (RealPhase next_phase, output_fn)
 
 -----------------------------------------------------------------------------
+-- Mu phase
+
+runPhase (RealPhase Mu) input_fn dflags
+  = do
+      let next_phase = if gopt Opt_SplitObjs dflags then Splitter else As False
+      output_fn <- phaseOutputFilename next_phase
+      liftIO $ debugTraceMsg dflags 0 (text "Placeholder for the Mu compilation phase. This doesn't do anything yet!")
+      return (RealPhase next_phase, output_fn)
+
+-----------------------------------------------------------------------------
 -- merge in stub objects
 
 runPhase (RealPhase MergeStub) input_fn dflags
@@ -2269,6 +2279,7 @@ hscPostBackendPhase dflags _ hsc_lang =
         HscAsm | gopt Opt_SplitObjs dflags -> Splitter
                | otherwise                 -> As False
         HscLlvm        -> LlvmOpt
+        HscMu          -> Mu
         HscNothing     -> StopLn
         HscInterpreted -> StopLn
 
