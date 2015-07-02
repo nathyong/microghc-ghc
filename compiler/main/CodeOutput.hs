@@ -12,6 +12,7 @@ module CodeOutput( codeOutput, outputForeignStubs ) where
 
 import AsmCodeGen ( nativeCodeGen )
 import LlvmCodeGen ( llvmCodeGen )
+import MuCodeGen ( muCodeGen )
 
 import UniqSupply       ( mkSplitUniqSupply )
 
@@ -80,6 +81,7 @@ codeOutput dflags this_mod filenm location foreign_stubs pkg_deps cmm_stream
                                          linted_cmm_stream;
              HscC           -> outputC dflags filenm linted_cmm_stream pkg_deps;
              HscLlvm        -> outputLlvm dflags filenm linted_cmm_stream;
+             HscMu          -> outputMu dflags filenm linted_cmm_stream;
              HscInterpreted -> panic "codeOutput: HscInterpreted";
              HscNothing     -> panic "codeOutput: HscNothing"
           }
@@ -171,6 +173,24 @@ outputLlvm dflags filenm cmm_stream
        {-# SCC "llvm_output" #-} doOutput filenm $
            \f -> {-# SCC "llvm_CodeGen" #-}
                  llvmCodeGen dflags f ncg_uniqs cmm_stream
+
+{-
+************************************************************************
+*                                                                      *
+\subsection{Mu}
+*                                                                      *
+************************************************************************
+-}
+
+outputMu :: DynFlags -> FilePath -> Stream IO RawCmmGroup () -> IO ()
+outputMu dflags filenm cmm_stream
+  = do ncg_uniqs <- mkSplitUniqSupply 'n'
+
+       debugTraceMsg dflags 4 (text "Outputing mu to" <+> text filenm)
+
+       {-# SCC "mu_output" #-} doOutput filenm $
+           \f -> {-# SCC "mu_CodeGen" #-}
+                 muCodeGen dflags f ncg_uniqs cmm_stream
 
 {-
 ************************************************************************
