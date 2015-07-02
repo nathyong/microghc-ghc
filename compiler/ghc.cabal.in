@@ -134,6 +134,7 @@ Library
         iface
         llvmGen
         main
+        muGen
         nativeGen
         parser
         prelude
@@ -178,6 +179,7 @@ Library
         LlvmMangler
         MkId
         Module
+        MuCodeGen
         Name
         NameEnv
         NameSet
