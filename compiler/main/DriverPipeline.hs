@@ -1524,7 +1524,7 @@ runPhase (RealPhase LlvmMangle) input_fn dflags
 -----------------------------------------------------------------------------
 -- Mu phase
 
-runPhase (RealPhase Mu) input_fn dflags
+runPhase (RealPhase Mu) _ dflags
   = do
       let next_phase = if gopt Opt_SplitObjs dflags then Splitter else As False
       output_fn <- phaseOutputFilename next_phase
