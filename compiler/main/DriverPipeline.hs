@@ -1524,11 +1524,12 @@ runPhase (RealPhase LlvmMangle) input_fn dflags
 -----------------------------------------------------------------------------
 -- Mu phase
 
-runPhase (RealPhase Mu) _ dflags
+runPhase (RealPhase Mu) input_fn dflags
   = do
-      let next_phase = if gopt Opt_SplitObjs dflags then Splitter else As False
+      let next_phase = StopLn
       output_fn <- phaseOutputFilename next_phase
       liftIO $ debugTraceMsg dflags 0 (text "Placeholder for the Mu compilation phase. This doesn't do anything yet!")
+      liftIO $ debugTraceMsg dflags 0 (text input_fn)
       return (RealPhase next_phase, output_fn)
 
 -----------------------------------------------------------------------------

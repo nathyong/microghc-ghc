@@ -189,7 +189,7 @@ nextPhase dflags p
       LlvmOpt    -> LlvmLlc
       LlvmLlc    -> LlvmMangle
       LlvmMangle -> As False
-      Mu         -> As False
+      Mu         -> StopLn
       SplitAs    -> MergeStub
       As _       -> MergeStub
       Ccpp       -> As False
